@@ -2,7 +2,6 @@ import java.util.Scanner;
 // 사용자로부터 로그인 or 회원가입을 선택받아 진행하는 클래스
 
 import database.AllUsersData;
-import database.UserVO;
 public class LoginMenu {
 
 	static Scanner scan = new Scanner(System.in);
@@ -71,6 +70,7 @@ public class LoginMenu {
 						MakeAccount makeUserVO = new MakeAccount();
 						makeUserVO.makeUserNo();
 						makeUserVO.makeUserAccount();
+						System.out.println("회원가입이 완료되었습니다.");
 						break;
 					} else if (signinOrEnd.equals("2")) {
 						// 프로그램 종료 혹은 다른 값 선택시 => 종료
@@ -99,7 +99,7 @@ public class LoginMenu {
 	
 	
 	// 로그인 메소드
-	public boolean login() {
+	public void login() {
 		// 사용자로부터 ID와 Password를 입력받고 받아온 값을 VO에서 찾기
 
 		// 입력받은 ID로 VO key값과 대조해 데이터를 가져오고, 해당 VO 안의 password를 accountedPassword에 할당하기
@@ -111,7 +111,6 @@ public class LoginMenu {
 				String password = inputData("Password");
 				// pw 일치하면 true, 아니면 false
 				permitted = (AllUsersData.allUsers.get(userId)).isPermitted();
-				UserVO vo = AllUsersData.allUsers.get(userId);
 				if(password.equals(accountedPassword)) {
 					break;					
 				} else {
@@ -121,7 +120,6 @@ public class LoginMenu {
 				System.out.println("가입되지 않은 ID입니다.");
 			}
 		} while(true);
-		return permitted;
 	}
 	
 	

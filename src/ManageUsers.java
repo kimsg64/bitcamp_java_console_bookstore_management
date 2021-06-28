@@ -34,7 +34,14 @@ public class ManageUsers {
 			case "3":
 				System.out.println("사용자 정보를 수정합니다.");
 				System.out.println("검색을 통해 수정할 대상을 선택해 주세요.");
-				updateUser();
+				UserVO willBeUpdated = updateUser();
+				// 수정 결과 출력
+				System.out.println("=======================================================================수정완료=======================================================================");
+				System.out.printf("  회원번호\t      이름    \t         주소        \t    연락처    \t      ID\t  비밀번호\t\t 이메일\t\t\t  권한\n");
+				System.out.println("======================================================================================================================================================");
+				System.out.printf("%s\t %7s\t %10s\t\t %13s \t %10s\t %10s\t %20s\t\t %s\n", willBeUpdated.getUserNo(), willBeUpdated.getUserName(), willBeUpdated.getAddress(), willBeUpdated.getContact(), willBeUpdated.getUserID(), willBeUpdated.getPassword(), willBeUpdated.geteMail(), willBeUpdated.isPermitted() ? "Admin" : "Normal");
+				System.out.println("======================================================================================================================================================");
+				System.out.println();
 				selectWork();
 			case "4":
 				System.out.println("사용자를 삭제합니다.");
@@ -107,7 +114,7 @@ public class ManageUsers {
 			if(canEscape) break;
 		} while(true);
 		System.out.printf("%s(으)로 검색\n", item);
-		String keyword = LoginMenu.inputData("검색어를 입력해 주세요.");
+		String keyword = LoginMenu.inputData("검색어를 입력해 주세요");
 		
 		// 입력된 검색어는 allUsers.values 중, getter를 통해 포함된 값이 있다면 출력
 		Collection<UserVO> valuesCollection = AllUsersData.allUsers.values();
@@ -164,17 +171,21 @@ public class ManageUsers {
 	}
 	
 	// 수정: 이름/주소/연락처/비밀번호/메일/접근권한 수정
-	public void updateUser() {
+	public UserVO updateUser() {
 		// 수정할 대상 선택
-		// searchUser를 시행하되 한 명만 선택해야 하므로 updaiting을 전달 
+		// searchUser를 시행하되 한 명만 선택해야 하므로 updaiting을 전달
 		UserVO willBeUpdated = searchUser();
-		if (searchResult > 1) {
-			System.out.println("한 번에 하나의 항목만 수정할 수 있습니다.");
-			willBeUpdated = searchUser();
-		} else if (searchResult < 1) {
-			System.out.println("검색 결과가 없습니다.");
-			willBeUpdated = searchUser();
-		}
+		do {
+			if (searchResult > 1) {
+				System.out.println("한 번에 하나의 항목만 수정할 수 있습니다.");
+				System.out.println("대상을 다시 선택해 주세요.");
+				willBeUpdated = searchUser();
+			} else if (searchResult < 1) {
+				System.out.println("검색 결과가 없습니다.");
+				System.out.println("대상을 다시 선택해 주세요.");
+				willBeUpdated = searchUser();
+			} else break;
+		} while(true);
 		System.out.printf("%s님의 정보를 수정합니다. ", willBeUpdated.getUserName());
 		// 수정할 항목 선택
 		String itemNo = LoginMenu.inputData("수정할 항목을 선택해 주세요[1.이름  2.주소  3.연락처  4.비밀번호  5.이메일  6.권한]");
@@ -251,32 +262,30 @@ public class ManageUsers {
 				System.out.println("수정할 대상을 다시 선택해 주세요.");
 				updateUser();
 		}
-		// 수정 결과 출력
-		System.out.println("=======================================================================수정완료=======================================================================");
-		System.out.printf("  회원번호\t      이름    \t         주소        \t    연락처    \t      ID\t  비밀번호\t\t 이메일\t\t\t  권한\n");
-		System.out.println("======================================================================================================================================================");
-		System.out.printf("%s\t %7s\t %10s\t\t %13s \t %10s\t %10s\t %20s\t\t %s\n", willBeUpdated.getUserNo(), willBeUpdated.getUserName(), willBeUpdated.getAddress(), willBeUpdated.getContact(), willBeUpdated.getUserID(), willBeUpdated.getPassword(), willBeUpdated.geteMail(), willBeUpdated.isPermitted() ? "Admin" : "Normal");
-		System.out.println("======================================================================================================================================================");
-		System.out.println();
+		return willBeUpdated;
 	}
 	
 	// 제거: 제거
 	public void removeUser() {
 		System.out.println("삭제할 대상을 선택해 주세요");
 		UserVO willBeRemoved = searchUser();
-		if (searchResult > 1) {
-			System.out.println("한 번에 하나의 항목만 삭제할 수 있습니다.");
-			willBeRemoved = searchUser();
-		} else if (searchResult < 1) {
-			System.out.println("검색 결과가 없습니다.");
-			willBeRemoved = searchUser();
-		}
+		do {
+			if (searchResult > 1) {
+				System.out.println("한 번에 하나의 항목만 삭제할 수 있습니다.");
+				System.out.println("대상을 다시 선택해 주세요.");
+				willBeRemoved = searchUser();
+			} else if (searchResult < 1) {
+				System.out.println("검색 결과가 없습니다.");
+				System.out.println("대상을 다시 선택해 주세요.");
+				willBeRemoved = searchUser();
+			} else break;
+		} while(true);
 		String areYouSure = LoginMenu.inputData("정말로 위 사용자의 정보를 삭제하시겠습니까?[1.예  2.아니오]");
 		if (areYouSure.equals("1")) {
-			System.out.printf("%s의 사용자 정보가 삭제되었습니다.", willBeRemoved.getUserName());
+			System.out.printf("%s의 사용자 정보가 삭제되었습니다.\n", willBeRemoved.getUserName());
 			AllUsersData.allUsers.remove(willBeRemoved.getUserID(), willBeRemoved);
 		} else if(areYouSure.equals("2")) {
-			System.out.printf("%s의 삭제를 취소합니다.\n", willBeRemoved);
+			System.out.printf("%s의 삭제를 취소합니다.\n", willBeRemoved.getUserName());
 		} else {
 			System.out.println("잘못된 값이 입력되어 삭제를 취소합니다.");
 		}

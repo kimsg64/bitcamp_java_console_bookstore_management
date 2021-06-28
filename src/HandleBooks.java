@@ -30,7 +30,14 @@ public class HandleBooks {
 			case "3":
 				System.out.println("도서 정보를 수정합니다.");
 				System.out.println("검색을 통해 수정할 대상을 선택해 주세요.");
-				updateBook();
+				BookVO willBeUpdated = updateBook();
+				// 수정 결과 출력
+				System.out.println("=======================================================================수정완료=======================================================================");
+				System.out.printf("제목                                              저자                          출판사              장르               재고      판매가\n");
+				System.out.println("======================================================================================================================================================");
+				BookVO.printOneBook(willBeUpdated);
+				System.out.println("======================================================================================================================================================");
+				System.out.println();
 				selectWork();
 			case "4":
 				System.out.println("도서를 제거합니다.");
@@ -155,15 +162,19 @@ public class HandleBooks {
 			BookVO.printAllBooks();
 		}
 		
-		public void updateBook() {
+		public BookVO updateBook() {
 			BookVO willBeUpdated = searchBook();
-			if (searchResult > 1) {
-				System.out.println("한 번에 하나의 항목만 수정할 수 있습니다.");
-				willBeUpdated = searchBook();
-			} else if (searchResult < 1) {
-				System.out.println("검색 결과가 없습니다.");
-				willBeUpdated = searchBook();
-			}
+			do {
+				if (searchResult > 1) {
+					System.out.println("한 번에 하나의 항목만 수정할 수 있습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeUpdated = searchBook();
+				} else if (searchResult < 1) {
+					System.out.println("검색 결과가 없습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeUpdated = searchBook();
+				} else break;
+			} while(true);
 			System.out.printf("%s의 정보를 수정합니다.\n", willBeUpdated.getTitle());
 			// 수정할 항목 선택
 			String itemNo = LoginMenu.inputData("수정할 항목을 선택해 주세요[1.제목  2.저자  3.출판사  4.장르  5.작업취소]");
@@ -171,22 +182,22 @@ public class HandleBooks {
 			// 수정할 대상의 value 중에서 항목이 일치하는 것을 setter로 수정
 			switch(itemNo) {
 				case "1":
-					updated = LoginMenu.inputData("수정할 제목을 입력해 주세요.");
+					updated = LoginMenu.inputData("수정할 제목을 입력해 주세요");
 					System.out.printf("%s의 제목을 수정합니다.\n", willBeUpdated.getTitle());
 					willBeUpdated.setTitle(updated);;
 					break;
 				case "2":
-					updated = LoginMenu.inputData("수정할 저자명을 입력해 주세요.");
+					updated = LoginMenu.inputData("수정할 저자명을 입력해 주세요");
 					System.out.printf("%s의 저자명을 수정합니다.\n", willBeUpdated.getTitle());
 					willBeUpdated.setAuthor(updated);
 					break;
 				case "3":
-					updated = LoginMenu.inputData("수정할 출판사를 입력해 주세요.");
+					updated = LoginMenu.inputData("수정할 출판사를 입력해 주세요");
 					System.out.printf("%s의 출판사를 수정합니다.\n", willBeUpdated.getTitle());
 					willBeUpdated.setPublisher(updated);;
 					break;
 				case "4":
-					updated = LoginMenu.inputData("수정할 장르를 입력해 주세요.");
+					updated = LoginMenu.inputData("수정할 장르를 입력해 주세요");
 					System.out.printf("%s의 장르를 수정합니다.\n", willBeUpdated.getTitle());
 					willBeUpdated.setGenre(updated);
 					break;
@@ -198,36 +209,34 @@ public class HandleBooks {
 					System.out.println("수정할 항목을 다시 선택해 주세요.");
 					updateBook();
 			}
-			// 수정 결과 출력
-			System.out.println("=======================================================================수정완료=======================================================================");
-			System.out.printf("제목                                              저자                          출판사              장르               재고      판매가\n");
-			System.out.println("======================================================================================================================================================");
-			BookVO.printOneBook(willBeUpdated);
-			System.out.println("======================================================================================================================================================");
-			System.out.println();
+
+			return willBeUpdated;
 		}
 		
 		public void removeBook() {
 			System.out.println("삭제할 대상을 선택해 주세요");
 			BookVO willBeRemoved = searchBook();
-			if (searchResult > 1) {
-				System.out.println("한 번에 하나의 항목만 삭제할 수 있습니다.");
-				willBeRemoved = searchBook();
-			} else if (searchResult < 1) {
-				System.out.println("검색 결과가 없습니다.");
-				willBeRemoved = searchBook();
-			}
-			
+			do {
+				if (searchResult > 1) {
+					System.out.println("한 번에 하나의 항목만 삭제할 수 있습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeRemoved = searchBook();
+				} else if (searchResult < 1) {
+					System.out.println("검색 결과가 없습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeRemoved = searchBook();
+				} else break;
+			} while(true);
 			String areYouSure = LoginMenu.inputData("정말로 위 도서의 정보를 삭제하시겠습니까?[1.예  2.아니오]");
 			if (areYouSure.equals("1")) {
-				System.out.printf("%s의 도서 정보가 삭제되었습니다.\n", willBeRemoved);
+				System.out.printf("%s의 도서 정보가 삭제되었습니다.\n", willBeRemoved.getTitle());
 				AllBooksData.allBooks.remove(willBeRemoved.getTitle(), willBeRemoved);
 			} else if(areYouSure.equals("2")) {
-				System.out.printf("%s의 삭제를 취소합니다.\n", willBeRemoved);
+				System.out.printf("%s의 삭제를 취소합니다.\n", willBeRemoved.getTitle());
 			} else {
 				System.out.println("잘못된 값이 입력되어 삭제를 취소합니다.");
 			}
-			
+
 			System.out.println("=======================================================================삭제완료=======================================================================");
 			BookVO.printAllBooks();
 		}
@@ -235,13 +244,17 @@ public class HandleBooks {
 		public void checkStock() {
 			System.out.println("재고관리 대상을 선택해 주세요");
 			BookVO willBeHandled = searchBook();
-			if (searchResult > 1) {
-				System.out.println("한 번에 하나의 항목만 관리할 수 있습니다.");
-				willBeHandled = searchBook();
-			} else if (searchResult < 1) {
-				System.out.println("검색 결과가 없습니다.");
-				willBeHandled = searchBook();
-			}
+			do {
+				if (searchResult > 1) {
+					System.out.println("한 번에 하나의 항목만 관리할 수 있습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeHandled = searchBook();
+				} else if (searchResult < 1) {
+					System.out.println("검색 결과가 없습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeHandled = searchBook();
+				} else break;
+			} while(true);
 			System.out.printf("%s의 현재 재고: %d\n", willBeHandled.getTitle(), willBeHandled.getStock());
 			
 			int calculated = 0;
@@ -268,13 +281,17 @@ public class HandleBooks {
 		public void changePrice() {
 			System.out.println("가격관리 대상을 선택해 주세요");
 			BookVO willBeHandled = searchBook();
-			if (searchResult > 1) {
-				System.out.println("한 번에 하나의 항목만 관리할 수 있습니다.");
-				willBeHandled = searchBook();
-			} else if (searchResult < 1) {
-				System.out.println("검색 결과가 없습니다.");
-				willBeHandled = searchBook();
-			}
+			do {
+				if (searchResult > 1) {
+					System.out.println("한 번에 하나의 항목만 관리할 수 있습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeHandled = searchBook();
+				} else if (searchResult < 1) {
+					System.out.println("검색 결과가 없습니다.");
+					System.out.println("대상을 다시 선택해 주세요.");
+					willBeHandled = searchBook();
+				} else break;
+			} while(true);
 			System.out.printf("%s의 현재 가격: %d원\n", willBeHandled.getTitle(), willBeHandled.getPrice());
 			
 			int calculated = 0;
